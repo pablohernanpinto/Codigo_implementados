@@ -86,11 +86,12 @@ def Crear_modelo_CATBOOST(X_train, y_train):
         n_iter=7,            # Número balanceado entre velocidad y calidad
         scoring='recall',
         n_jobs=-1,
+        cv=10,
         random_state=42,
         verbose=1
     )
 
-    bayes_search.fit(X_train, y_train, eval_set=(X_val, y_val))
+    bayes_search.fit(X_train, y_train)
     return bayes_search.best_estimator_
 
 
@@ -500,8 +501,8 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             X = np.asarray(X).astype(np.float32)
             y = np.asarray(y).astype(np.float32)
 
-            #X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
-
+            X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
+            """ 
             folds = 10
             skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
             print('base')
@@ -599,15 +600,15 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             
                 # Liberar memoria
                 del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
-                gc.collect()  # Forzar recolección de basura
-            """ 
+                gc.collect()  # Forzar recolección de basura """
+
             tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn = entrenamiento_base_CATBOOST(X_train, X_test, y_train, y_test)
 
             inscripcion_resultados_CATBOOST(archivo, bacteria,tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn)
             
             del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
-            gc.collect() """
-            """  
+            gc.collect()
+
             #Entrenamiento Smote
             tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn = Aplicar_Smote_CATBOOST(X_train, X_test, y_train, y_test)
             inscripcion_resultados_CATBOOST(archivo, bacteria,tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn)
@@ -631,15 +632,7 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn = Aplicar_Copulas_CATBOOST(X_train, X_test, y_train, y_test)
             inscripcion_resultados_CATBOOST(archivo, bacteria,tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn)
             del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
-            gc.collect() 
-            
-            
-            ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_10000Da_talca_e_coli_v2.csv' ] 
-
-
-            """
-             
-            
+            gc.collect()            
         except Exception  as e:
             print('este es el error ', e)
             Correo('Error',str(e))

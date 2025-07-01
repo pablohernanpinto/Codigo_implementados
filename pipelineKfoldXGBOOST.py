@@ -98,6 +98,7 @@ def Crear_modelo_XGBOOST(X_train, y_train):
         search_spaces=param_search,
         n_iter=10,         # Aumenta para mejor ajuste
         scoring='recall',  # Cambia a 'f1', 'accuracy', etc., si lo prefieres
+        cv=10,
         n_jobs=-1,
         verbose=1,
         random_state=42
@@ -470,7 +471,7 @@ def Correo(correo,contenido):
 
 files_list = os.listdir('SetDatos/')
 
-for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_10000Da_talca_e_coli_v2.csv' ] : #files_list ['bin_10_2000Da_10000Da_talca_e_coli_v2.csv'] ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_10000Da_talca_e_coli_v2.csv' ]
+for archivo in  files_list: #files_list ['bin_10_2000Da_10000Da_talca_e_coli_v2.csv'] ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_10000Da_talca_e_coli_v2.csv' ]
     print(archivo,'imprimiendo archivo')
     df = pd.read_csv('SetDatos/'+archivo)
     #print(df)
@@ -517,8 +518,8 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             X = np.asarray(X).astype(np.float32)
             y = np.asarray(y).astype(np.float32)
 
-            #X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
-
+            X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
+            """ 
             folds = 10
             skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
             
@@ -616,15 +617,15 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             
                 # Liberar memoria
                 del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
-                gc.collect()  # Forzar recolección de basura 
-            """ 
+                gc.collect()  # Forzar recolección de basura  """
+
             tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn = entrenamiento_base_XGBOOST(X_train, X_test, y_train, y_test)
 
             inscripcion_resultados_XGBOOST(archivo, bacteria,tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn)
             
             del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
-            gc.collect() """
-            """  
+            gc.collect()
+
             #Entrenamiento Smote
             tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn = Aplicar_Smote_XGBOOST(X_train, X_test, y_train, y_test)
             inscripcion_resultados_XGBOOST(archivo, bacteria,tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn)
@@ -650,12 +651,6 @@ for archivo in  ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_1000
             del tipo_entrenamiento,exactitud,sensibilidad,especificidad,vpp,vpn,PRC,AUC,tp,tn,fp,fn
             gc.collect() 
             
-            
-            ['e_coli_driams_b_2000_20000Da_v2 (1).csv',  'bin_10_2000Da_10000Da_talca_e_coli_v2.csv' ] 
-
-
-            """
-             
             
         except Exception  as e:
             print('este es el error ', e)
